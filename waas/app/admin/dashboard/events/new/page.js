@@ -631,19 +631,7 @@ export default function CreateEventPage() {
               <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-orange-500/30 rounded-br-3xl animate-pulse-slow animation-delay-1000"></div>
             </div>
 
-            {/* Orbiting Particles */}
-            {[...Array(8)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-3 h-3 rounded-full animate-orbit"
-                style={{
-                  background: `rgba(${i % 2 === 0 ? "168, 85, 247" : "251, 146, 60"}, 0.6)`,
-                  animationDelay: `${i * 0.5}s`,
-                  left: "50%",
-                  top: "50%",
-                }}
-              />
-            ))}
+            
 
             {/* Energy Rings */}
             <div className="absolute inset-0 -m-6">
@@ -657,19 +645,9 @@ export default function CreateEventPage() {
             </div>
           </div>
 
-          {/* Floating Icons */}
-          <div className="absolute top-10 left-10 w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center border border-purple-500/30 animate-float-random animation-delay-500 backdrop-blur-sm">
-            <span className="text-2xl">🎉</span>
-          </div>
-          <div className="absolute top-20 right-20 w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500/20 to-pink-600/20 flex items-center justify-center border border-pink-500/30 animate-float-random animation-delay-1000 backdrop-blur-sm">
-            <span className="text-2xl">✨</span>
-          </div>
-          <div className="absolute bottom-20 left-20 w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center border border-orange-500/30 animate-float-random animation-delay-1500 backdrop-blur-sm">
-            <span className="text-2xl">🎊</span>
-          </div>
-          <div className="absolute bottom-32 right-32 w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 flex items-center justify-center border border-cyan-500/30 animate-float-random animation-delay-2000 backdrop-blur-sm">
-            <span className="text-2xl">🎈</span>
-          </div>
+          
+          
+         
         </div>
       </div>
 
