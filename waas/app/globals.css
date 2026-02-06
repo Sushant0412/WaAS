@@ -2,31 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Balboa Font */
-@font-face {
-  font-family: 'Balboa';
-  src: url('/fonts/Balboa.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Balboa Plus';
-  src: url('/fonts/fonnts.com-BalboaPlus_Fill.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Balboa Condensed';
-  src: url('/fonts/fonnts.com-Balboa_ExtraCondensed.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
