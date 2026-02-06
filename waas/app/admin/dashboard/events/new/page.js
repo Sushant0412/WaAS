@@ -363,7 +363,7 @@ export default function CreateEventPage() {
                       <div
                         className={`w-10 h-10 rounded-lg mb-3 flex items-center justify-center transition-all duration-300 ${
                           formData.approvalType === "qr"
-                            ? "bg-purple-500 animate-bounce-slow"
+                            ? "bg-purple-500"
                             : "bg-zinc-700"
                         }`}
                       >
@@ -408,7 +408,7 @@ export default function CreateEventPage() {
                       <div
                         className={`w-10 h-10 rounded-lg mb-3 flex items-center justify-center transition-all duration-300 ${
                           formData.approvalType === "wallet"
-                            ? "bg-emerald-500 animate-bounce-slow"
+                            ? "bg-emerald-500"
                             : "bg-zinc-700"
                         }`}
                       >
@@ -580,8 +580,8 @@ export default function CreateEventPage() {
                 </h3>
 
                 <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-3 text-zinc-400 animate-slide-in-right">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center border border-orange-500/30 animate-pulse-glow">
+                  <div className="flex items-center gap-3 text-zinc-400 ">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center border border-orange-500/30 ">
                       <span className="text-lg">📍</span>
                     </div>
                     <span className="text-sm">
@@ -590,7 +590,7 @@ export default function CreateEventPage() {
                   </div>
 
                   <div className="flex items-center gap-3 text-zinc-400 animate-slide-in-right animation-delay-200">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center border border-purple-500/30 animate-pulse-glow animation-delay-100">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center border border-purple-500/30">
                       <span className="text-lg">📅</span>
                     </div>
                     <span className="text-sm">
@@ -631,8 +631,6 @@ export default function CreateEventPage() {
               <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-orange-500/30 rounded-br-3xl animate-pulse-slow animation-delay-1000"></div>
             </div>
 
-            
-
             {/* Energy Rings */}
             <div className="absolute inset-0 -m-6">
               <div className="absolute inset-0 border-2 border-purple-500/20 rounded-3xl animate-ping-slow"></div>
@@ -644,10 +642,6 @@ export default function CreateEventPage() {
               <div className="absolute inset-0 border-2 border-orange-500/20 rounded-3xl animate-ping-slow animation-delay-1000"></div>
             </div>
           </div>
-
-          
-          
-         
         </div>
       </div>
 
