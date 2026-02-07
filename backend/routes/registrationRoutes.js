@@ -2,6 +2,7 @@ const router = require("express").Router();
 const Registration = require("../models/Registration");
 const Event = require("../models/Event");
 const { generateQRToken, generateQRCode, sendQREmail } = require("../services/emailService");
+const { generateApprovalProof } = require("../services/zkProofService");
 
 // Create registration
 router.post("/", async (req, res) => {
@@ -17,7 +18,7 @@ router.post("/", async (req, res) => {
 // Approve registration
 router.put("/approve/:id", async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, adminWallet } = req.body;
 
     // Get registration with event details
     const registration = await Registration.findById(req.params.id);
@@ -34,6 +35,32 @@ router.put("/approve/:id", async (req, res) => {
       status: "approved",
       adminMessage: message,
     };
+
+    // Generate ZK proof for the approval
+    try {
+      console.log("🔐 Generating ZK proof for approval...");
+      const proofResult = await generateApprovalProof({
+        walletAddress: registration.walletAddress,
+        eventId: registration.eventId.toString(),
+        adminWallet: adminWallet || event.createdBy,
+      });
+
+      if (proofResult.success) {
+        updateData.zkProof = proofResult.proof;
+        updateData.proofCommitment = proofResult.commitment;
+        updateData.proofNullifier = proofResult.nullifier;
+        updateData.proofGeneratedAt = new Date();
+        
+        console.log("✅ ZK proof generated:", {
+          commitment: proofResult.commitment,
+          nullifier: proofResult.nullifier,
+          isMock: proofResult.isMock || false,
+        });
+      }
+    } catch (proofError) {
+      console.error("⚠️ ZK proof generation failed (continuing with approval):", proofError.message);
+      // Continue with approval even if proof generation fails
+    }
 
     // If it's a QR event, generate QR code
     if (event.approvalType === "qr") {
@@ -73,6 +100,7 @@ router.put("/approve/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to approve registration" });
   }
 });
+
 
 // Get registrations by user wallet
 router.get("/user/:wallet", async (req, res) => {

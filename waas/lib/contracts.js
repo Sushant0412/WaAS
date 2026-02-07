@@ -1,0 +1,156 @@
+import { ethers } from "ethers";
+
+// Contract addresses - update after deployment
+const CONTRACT_ADDRESSES = {
+  localhost: {
+    WhitelistRegistry: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    Groth16Verifier: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  },
+  sepolia: {
+    WhitelistRegistry: "0xfce59B6D7E06380b1BACF5c4655d020b2d351dA4",
+    Groth16Verifier: "0x4d1d41332a3ae4CC93388f99f8D33745D83dFeFf",
+  },
+};
+
+// WhitelistRegistry ABI (minimal interface for frontend)
+const WHITELIST_REGISTRY_ABI = [
+  "function verifyAndRegister(uint[2] calldata _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[4] calldata _pubSignals) external returns (bool)",
+  "function isNullifierUsed(uint256 _eventId, uint256 _nullifier) external view returns (bool)",
+  "function hasCommitment(uint256 _eventId, uint256 _commitment) external view returns (bool)",
+  "function getVerifiedCount(uint256 _eventId) external view returns (uint256)",
+  "event ApprovalVerified(uint256 indexed eventId, uint256 nullifier, uint256 commitment, uint256 timestamp)",
+];
+
+/**
+ * Get contract addresses for the current network
+ */
+export function getContractAddresses(chainId) {
+  switch (chainId) {
+    case 31337n: // Hardhat local
+    case 1337n: // Ganache
+      return CONTRACT_ADDRESSES.localhost;
+    case 11155111n: // Sepolia
+      return CONTRACT_ADDRESSES.sepolia;
+    default:
+      return null;
+  }
+}
+
+/**
+ * Initialize WhitelistRegistry contract instance
+ */
+export async function getWhitelistRegistry(signer) {
+  const network = await signer.provider.getNetwork();
+  const addresses = getContractAddresses(network.chainId);
+  
+  if (!addresses?.WhitelistRegistry) {
+    throw new Error("WhitelistRegistry not deployed on this network");
+  }
+
+  return new ethers.Contract(
+    addresses.WhitelistRegistry,
+    WHITELIST_REGISTRY_ABI,
+    signer
+  );
+}
+
+/**
+ * Verify a ZK proof on-chain
+ * @param {Object} signer - Ethers signer
+ * @param {Object} proofData - Proof data with calldata format
+ * @param {string} eventId - Numeric event ID
+ * @param {string} nullifier - Proof nullifier
+ * @param {string} commitment - Proof commitment
+ */
+export async function verifyProofOnChain(signer, proofData, eventId, nullifier, commitment) {
+  try {
+    const registry = await getWhitelistRegistry(signer);
+    
+    const tx = await registry.verifyAndRegister(
+      proofData.pA,
+      proofData.pB,
+      proofData.pC,
+      eventId,
+      nullifier,
+      commitment
+    );
+    
+    const receipt = await tx.wait();
+    return {
+      success: true,
+      txHash: receipt.hash,
+      blockNumber: receipt.blockNumber,
+    };
+  } catch (error) {
+    console.error("On-chain verification failed:", error);
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * Check if a nullifier has been used for an event
+ */
+export async function isNullifierUsed(provider, eventId, nullifier) {
+  try {
+    const network = await provider.getNetwork();
+    const addresses = getContractAddresses(network.chainId);
+    
+    if (!addresses?.WhitelistRegistry) {
+      return { checked: false, reason: "Contract not deployed" };
+    }
+
+    const registry = new ethers.Contract(
+      addresses.WhitelistRegistry,
+      WHITELIST_REGISTRY_ABI,
+      provider
+    );
+    
+    const used = await registry.isNullifierUsed(eventId, nullifier);
+    return { checked: true, used };
+  } catch (error) {
+    console.error("Error checking nullifier:", error);
+    return { checked: false, error: error.message };
+  }
+}
+
+/**
+ * Get verified count for an event
+ */
+export async function getVerifiedCount(provider, eventId) {
+  try {
+    const network = await provider.getNetwork();
+    const addresses = getContractAddresses(network.chainId);
+    
+    if (!addresses?.WhitelistRegistry) {
+      return { success: false, reason: "Contract not deployed" };
+    }
+
+    const registry = new ethers.Contract(
+      addresses.WhitelistRegistry,
+      WHITELIST_REGISTRY_ABI,
+      provider
+    );
+    
+    const count = await registry.getVerifiedCount(eventId);
+    return { success: true, count: count.toString() };
+  } catch (error) {
+    console.error("Error getting verified count:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Update contract addresses after deployment
+ * Call this with the deployment info
+ */
+export function setContractAddresses(network, addresses) {
+  if (CONTRACT_ADDRESSES[network]) {
+    CONTRACT_ADDRESSES[network] = {
+      ...CONTRACT_ADDRESSES[network],
+      ...addresses,
+    };
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "waas-blockchain",
+  "version": "1.0.0",
+  "description": "ZK-proof blockchain component for WaAS",
+  "main": "index.js",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "compile:circuit": "node scripts/compile-circuit.js",
+    "test": "npx hardhat test",
+    "deploy": "npx hardhat run scripts/deploy.js --network localhost",
+    "node": "npx hardhat node"
+  },
+  "dependencies": {
+    "circomlib": "^0.5.5",
+    "dotenv": "^17.2.4",
+    "snarkjs": "^0.7.5"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "hardhat": "^2.19.0"
+  }
+}

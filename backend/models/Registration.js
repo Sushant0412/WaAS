@@ -23,6 +23,27 @@ const registrationSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // ZK Proof fields
+    zkProof: {
+      type: Object, // Stores the full proof object
+      default: null,
+    },
+    proofCommitment: {
+      type: String, // The commitment hash from the proof
+      default: null,
+    },
+    proofNullifier: {
+      type: String, // Prevents double-verification
+      default: null,
+    },
+    onChainVerified: {
+      type: Boolean,
+      default: false,
+    },
+    proofGeneratedAt: {
+      type: Date,
+      default: null,
+    },
     // Cancellation fields
     cancellationReason: {
       type: String,

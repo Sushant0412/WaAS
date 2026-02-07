@@ -3,12 +3,14 @@
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useWeb3 } from "@/app/providers";
 
 const API_URL = "http://localhost:5000";
 
 export default function EventDetailPage({ params }) {
     const resolvedParams = use(params);
     const router = useRouter();
+    const { account } = useWeb3();
     const [event, setEvent] = useState(null);
     const [registrations, setRegistrations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -19,6 +21,7 @@ export default function EventDetailPage({ params }) {
     const [selectedRegistration, setSelectedRegistration] = useState(null);
     const [revokeReason, setRevokeReason] = useState("");
     const [deleting, setDeleting] = useState(false);
+    const [approvingId, setApprovingId] = useState(null);
 
     useEffect(() => {
         fetchEvent();
@@ -53,25 +56,40 @@ export default function EventDetailPage({ params }) {
     };
 
     const approveRegistration = async (registrationId, approvalType) => {
+        setApprovingId(registrationId);
         try {
             const message = approvalType === "qr"
                 ? "Please check your email for QR code"
                 : "You are approved!";
 
-            await fetch(`${API_URL}/register/approve/${registrationId}`, {
+            const response = await fetch(`${API_URL}/register/approve/${registrationId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message }),
+                body: JSON.stringify({ 
+                    message,
+                    adminWallet: account // Pass admin wallet for ZK proof generation
+                }),
             });
 
+            const result = await response.json();
+            
             fetchRegistrations();
+            
+            // Check if ZK proof was generated
+            const zkMessage = result.proofCommitment 
+                ? " (ZK proof generated ✓)" 
+                : "";
+            
             showNotification(
                 approvalType === "qr"
-                    ? "Approved! Email notification sent."
-                    : "Approved! User will see 'You are approved!'"
+                    ? `Approved! Email notification sent${zkMessage}`
+                    : `Approved! User whitelisted${zkMessage}`
             );
         } catch (err) {
             console.error("Error approving registration:", err);
+            showNotification("Error approving registration");
+        } finally {
+            setApprovingId(null);
         }
     };
 
@@ -357,12 +375,23 @@ export default function EventDetailPage({ params }) {
                                         </button>
                                         <button
                                             onClick={() => approveRegistration(reg._id, event.approvalType)}
-                                            className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${event.approvalType === "qr"
+                                            disabled={approvingId === reg._id}
+                                            className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 ${event.approvalType === "qr"
                                                 ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white"
                                                 : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white"
                                                 }`}
                                         >
-                                            {event.approvalType === "qr" ? "Approve & Send QR" : "Approve"}
+                                            {approvingId === reg._id ? (
+                                                <span className="flex items-center gap-2">
+                                                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Generating Proof...
+                                                </span>
+                                            ) : (
+                                                event.approvalType === "qr" ? "Approve & Send QR" : "Approve + ZK Proof"
+                                            )}
                                         </button>
                                     </div>
                                 </div>
@@ -400,15 +429,45 @@ export default function EventDetailPage({ params }) {
                                                     <span className="font-mono">{truncateAddress(reg.walletAddress)}</span>
                                                 )}
                                             </p>
-                                            <p className="text-emerald-400 text-xs">{reg.adminMessage}</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-emerald-400 text-xs">{reg.adminMessage}</p>
+                                                {/* ZK Proof Status Badge */}
+                                                {reg.proofCommitment && (
+                                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                                        </svg>
+                                                        ZK Verified
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                    <button
-                                        onClick={() => { setSelectedRegistration(reg); setShowRevokeModal(true); }}
-                                        className="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors"
-                                    >
-                                        Revoke
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        {/* Show proof commitment tooltip */}
+                                        {reg.proofCommitment && (
+                                            <div className="group relative">
+                                                <button className="px-3 py-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/30 hover:bg-purple-500/20 transition-colors text-xs">
+                                                    View Proof
+                                                </button>
+                                                <div className="hidden group-hover:block absolute bottom-full right-0 mb-2 p-3 bg-zinc-900 border border-zinc-700 rounded-xl shadow-xl w-72 z-10">
+                                                    <p className="text-xs text-zinc-400 mb-1">Commitment:</p>
+                                                    <p className="text-xs font-mono text-purple-400 break-all">{reg.proofCommitment?.slice(0, 32)}...</p>
+                                                    <p className="text-xs text-zinc-400 mt-2 mb-1">Nullifier:</p>
+                                                    <p className="text-xs font-mono text-purple-400 break-all">{reg.proofNullifier?.slice(0, 32)}...</p>
+                                                    {reg.proofGeneratedAt && (
+                                                        <p className="text-xs text-zinc-500 mt-2">Generated: {new Date(reg.proofGeneratedAt).toLocaleString()}</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                        <button
+                                            onClick={() => { setSelectedRegistration(reg); setShowRevokeModal(true); }}
+                                            className="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors"
+                                        >
+                                            Revoke
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
