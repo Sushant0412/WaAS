@@ -30,7 +30,13 @@ export default function Dashboard() {
                 const res = await fetch(`${API_URL}/events`);
                 if (!res.ok) throw new Error("Failed to fetch events");
                 const data = await res.json();
-                setEvents(data);
+                
+                // Filter events created by the connected wallet
+                const userEvents = data.filter(
+                    (event) => event.createdBy && event.createdBy.toLowerCase() === account.toLowerCase()
+                );
+                
+                setEvents(userEvents);
             } catch (err) {
                 console.error("Error fetching events:", err);
             } finally {
