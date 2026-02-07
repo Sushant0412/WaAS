@@ -16,12 +16,25 @@ const registrationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
+      enum: ["pending", "approved", "rejected", "cancelled"],
       default: "pending",
     },
     adminMessage: {
       type: String,
       default: "",
+    },
+    // Cancellation fields
+    cancellationReason: {
+      type: String,
+      default: "",
+    },
+    cancelledAt: {
+      type: Date,
+      default: null,
+    },
+    cancelledBy: {
+      type: String, // "user" or "admin"
+      default: null,
     },
   },
   { timestamps: true },

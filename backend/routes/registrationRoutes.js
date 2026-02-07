@@ -144,4 +144,116 @@ router.post("/verify-qr", async (req, res) => {
   }
 });
 
+// User cancellation - user cannot attend anymore
+router.put("/cancel/:id", async (req, res) => {
+  try {
+    const { reason, walletAddress } = req.body;
+
+    const registration = await Registration.findById(req.params.id);
+    if (!registration) {
+      return res.status(404).json({ error: "Registration not found" });
+    }
+
+    // Verify user owns this registration
+    if (registration.walletAddress !== walletAddress) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    // Can only cancel pending or approved registrations
+    if (!["pending", "approved"].includes(registration.status)) {
+      return res.status(400).json({ error: "Cannot cancel this registration" });
+    }
+
+    const updatedRegistration = await Registration.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "cancelled",
+        cancellationReason: reason || "No reason provided",
+        cancelledAt: new Date(),
+        cancelledBy: "user",
+      },
+      { new: true }
+    );
+
+    res.json(updatedRegistration);
+  } catch (err) {
+    console.error("Cancellation error:", err);
+    res.status(500).json({ error: "Failed to cancel registration" });
+  }
+});
+
+// Admin revoke approval - remove someone from whitelist
+router.put("/revoke/:id", async (req, res) => {
+  try {
+    const { reason } = req.body;
+
+    const registration = await Registration.findById(req.params.id);
+    if (!registration) {
+      return res.status(404).json({ error: "Registration not found" });
+    }
+
+    // Can only revoke approved registrations
+    if (registration.status !== "approved") {
+      return res.status(400).json({ error: "Can only revoke approved registrations" });
+    }
+
+    const updatedRegistration = await Registration.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "cancelled",
+        cancellationReason: reason || "Revoked by admin",
+        cancelledAt: new Date(),
+        cancelledBy: "admin",
+        qrToken: null, // Invalidate QR code
+        qrCode: null,
+      },
+      { new: true }
+    );
+
+    res.json(updatedRegistration);
+  } catch (err) {
+    console.error("Revoke error:", err);
+    res.status(500).json({ error: "Failed to revoke approval" });
+  }
+});
+
+// Admin reject registration
+router.put("/reject/:id", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    const updatedRegistration = await Registration.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "rejected",
+        adminMessage: message || "Your registration has been rejected",
+      },
+      { new: true }
+    );
+
+    if (!updatedRegistration) {
+      return res.status(404).json({ error: "Registration not found" });
+    }
+
+    res.json(updatedRegistration);
+  } catch (err) {
+    console.error("Rejection error:", err);
+    res.status(500).json({ error: "Failed to reject registration" });
+  }
+});
+
+// Get cancelled registrations for an event
+router.get("/event/:eventId/cancelled", async (req, res) => {
+  try {
+    const data = await Registration.find({
+      eventId: req.params.eventId,
+      status: "cancelled",
+    }).sort({ cancelledAt: -1 });
+    res.json(data);
+  } catch (err) {
+    console.error("Error fetching cancelled registrations:", err);
+    res.status(500).json({ error: "Failed to fetch registrations" });
+  }
+});
+
 module.exports = router;
