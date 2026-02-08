@@ -164,41 +164,10 @@ export default function EventsPage() {
       }
     } catch (error) {
       console.error("Verification error:", error);
-      
-      // FOR DEMO PURPOSES: If the error is "Invalid ZK proof", we treat it as success
-      // This is because we might be using mock proofs against a real contract
-      if (error && (error.message.includes("Invalid ZK proof") || error.message.includes("execution reverted"))) {
-        console.log("Treating invalid proof error as success for demo");
-        
-        // Mock a success result
-        const txHash = "0x" + Array(64).fill("0").map(() => Math.floor(Math.random() * 16).toString(16)).join("");
-        
-        // Update backend with verification status
-        try {
-          await fetch(`${API_URL}/register/verify-onchain/${registration._id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              txHash: txHash,
-              blockNumber: 12345678,
-              walletAddress: account,
-            }),
-          });
-
-          setStatusMessage(`Wallet verified!`);
-          setShowSuccess(true);
-          setTimeout(() => setShowSuccess(false), 4000);
-          fetchUserRegistrations(); // Refresh to show updated status
-        } catch (updateError) {
-          console.error("Failed to update verification status:", updateError);
-          setVerifyError("Verification succeeded but status update failed");
-        }
-      } else {
-        setVerifyError(error.message || "Unknown error");
-        setStatusMessage(`Verification failed: ${error.message || "Unknown error"}`);
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 6000);
-      }
+      setVerifyError(error.message || "Unknown error");
+      setStatusMessage(`Verification failed: ${error.message || "Unknown error"}`);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 6000);
     } finally {
       setIsVerifying(null);
     }

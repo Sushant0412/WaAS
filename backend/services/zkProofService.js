@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 // Paths to circuit build files (adjust based on your setup)
 const BC_BUILD_DIR = path.join(__dirname, "..", "..", "BC", "build");
-const WASM_PATH = path.join(BC_BUILD_DIR, "ApprovalProof_js", "ApprovalProof.wasm");
+const WASM_PATH = path.join(BC_BUILD_DIR, "ApprovalProof.wasm");
 const ZKEY_PATH = path.join(BC_BUILD_DIR, "ApprovalProof.zkey");
 const VKEY_PATH = path.join(BC_BUILD_DIR, "verification_key.json");
 
@@ -54,8 +54,17 @@ function computeNullifier(walletHash, eventId) {
  * Check if circuit files are available
  */
 function isCircuitReady() {
-  return fs.existsSync(WASM_PATH) && fs.existsSync(ZKEY_PATH);
+  const wasmExists = fs.existsSync(WASM_PATH);
+  const zkeyExists = fs.existsSync(ZKEY_PATH);
+  console.log(`🔍 Circuit check: WASM=${wasmExists} (${WASM_PATH}), ZKEY=${zkeyExists} (${ZKEY_PATH})`);
+  return wasmExists && zkeyExists;
 }
+
+// Log paths on module load
+console.log("🔐 ZK Proof Service initialized");
+console.log("   BC_BUILD_DIR:", BC_BUILD_DIR);
+console.log("   WASM_PATH:", WASM_PATH);
+console.log("   ZKEY_PATH:", ZKEY_PATH);
 
 /**
  * Load verification key (cached)
@@ -102,7 +111,6 @@ async function generateApprovalProof({ walletAddress, eventId, adminWallet }) {
       adminSecret,
       timestamp,
       eventId: numericEventId,
-      nullifier,
     };
 
     console.log("🔐 Generating ZK proof with input:", {
@@ -169,8 +177,8 @@ function generateMockProof({ walletAddress, eventId, adminWallet }) {
     "0x" + crypto.createHash("sha256").update(commitmentData).digest("hex").slice(0, 62)
   ).toString();
 
-  // The contract expects pubSignals with 4 elements: [commitment, nullifier, eventId, expectedNullifier]
-  const pubSignals = [commitment, nullifier, numericEventId, nullifier];
+  // The contract expects pubSignals with 3 elements: [commitment, nullifier, eventId]
+  const pubSignals = [commitment, nullifier, numericEventId];
 
   return {
     success: true,

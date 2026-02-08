@@ -3,22 +3,27 @@ import { ethers } from "ethers";
 // Contract addresses - update after deployment
 const CONTRACT_ADDRESSES = {
   localhost: {
-    WhitelistRegistry: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    Groth16Verifier: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    WhitelistRegistry: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    Groth16Verifier: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
   },
   sepolia: {
-    WhitelistRegistry: "0xfce59B6D7E06380b1BACF5c4655d020b2d351dA4",
-    Groth16Verifier: "0x4d1d41332a3ae4CC93388f99f8D33745D83dFeFf",
+    WhitelistRegistry: "0xe306a213c03C97da0A01E10703698d2a41980745",
+    Groth16Verifier: "0x02710d319b87c2c0734C9b30fD7F938B42C437CE",
   },
 };
 
 // WhitelistRegistry ABI (minimal interface for frontend)
 const WHITELIST_REGISTRY_ABI = [
-  "function verifyAndRegister(uint[2] calldata _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[4] calldata _pubSignals) external returns (bool)",
+  "function verifyAndRegister(uint[2] calldata _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[3] calldata _pubSignals) external returns (bool)",
   "function isNullifierUsed(uint256 _eventId, uint256 _nullifier) external view returns (bool)",
   "function hasCommitment(uint256 _eventId, uint256 _commitment) external view returns (bool)",
   "function getVerifiedCount(uint256 _eventId) external view returns (uint256)",
-  "event ApprovalVerified(uint256 indexed eventId, uint256 nullifier, uint256 commitment, uint256 timestamp)",
+  "function getMerkleRoot() external view returns (uint256)",
+  "function getNextLeafIndex() external view returns (uint256)",
+  "function isValidRoot(uint256 _root) external view returns (bool)",
+  "function totalCommitments() external view returns (uint256)",
+  "event ApprovalVerified(uint256 indexed eventId, uint256 nullifier, uint256 commitment, uint256 leafIndex, uint256 newRoot, uint256 timestamp)",
+  "event RootUpdated(uint256 indexed oldRoot, uint256 indexed newRoot, uint256 leafIndex)",
 ];
 
 /**
