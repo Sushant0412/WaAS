@@ -293,7 +293,7 @@ export default function EventsPage() {
       )}
 
       {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
+      <nav className="relative z-10 flex flex-col md:flex-row items-center justify-between px-4 md:px-8 py-6 max-w-7xl mx-auto gap-4 md:gap-0">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:shadow-orange-500/50 transition-all duration-300 group-hover:scale-110">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -324,9 +324,9 @@ export default function EventsPage() {
       </nav>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-8 py-12">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Available Events</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Available Events</h1>
           <p className="text-zinc-400">Browse events and register for whitelisting</p>
         </div>
 

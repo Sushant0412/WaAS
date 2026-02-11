@@ -189,7 +189,7 @@ export default function EventDetailPage({ params }) {
     const revokedRegistrations = registrations.filter(r => r.status === "revoked");
 
     return (
-        <div className="min-h-screen bg-zinc-950 p-8">
+        <div className="min-h-screen bg-zinc-950 p-4 md:p-8">
             {/* Success Toast */}
             {showSuccess && (
                 <div className="fixed top-6 right-6 z-50 animate-slide-in">
@@ -278,10 +278,10 @@ export default function EventDetailPage({ params }) {
                     Back to Dashboard
                 </Link>
 
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
-                            <h1 className="text-3xl font-bold text-white">{event.title}</h1>
+                            <h1 className="text-2xl md:text-3xl font-bold text-white">{event.title}</h1>
                             <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${event.approvalType === "qr"
                                 ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
                                 : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
@@ -289,7 +289,7 @@ export default function EventDetailPage({ params }) {
                                 {event.approvalType === "qr" ? "QR Code" : "Wallet Whitelist"}
                             </span>
                         </div>
-                        <div className="flex items-center gap-4 text-zinc-400 text-sm">
+                        <div className="flex items-center gap-4 text-zinc-400 text-sm flex-wrap">
                             {event.place && <span>📍 {event.place}</span>}
                             {event.date && <span>📅 {event.date}</span>}
                             {event.fee && <span>💰 {event.fee}</span>}
@@ -299,7 +299,7 @@ export default function EventDetailPage({ params }) {
                     {/* Delete Button */}
                     <button
                         onClick={() => setShowDeleteModal(true)}
-                        className="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors flex items-center gap-2"
+                        className="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors flex items-center gap-2 w-full md:w-auto justify-center"
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -310,7 +310,7 @@ export default function EventDetailPage({ params }) {
             </div>
 
             {/* Stats Row */}
-            <div className="grid grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div className="bg-zinc-900/60 rounded-xl p-4 border border-zinc-800/50">
                     <p className="text-zinc-500 text-xs mb-1">Total</p>
                     <p className="text-2xl font-bold text-white">{registrations.length}</p>
@@ -348,7 +348,7 @@ export default function EventDetailPage({ params }) {
                             {pendingRegistrations.map((reg) => (
                                 <div
                                     key={reg._id}
-                                    className="flex items-center justify-between p-4 rounded-xl bg-zinc-800/50 border border-zinc-700"
+                                    className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 rounded-xl bg-zinc-800/50 border border-zinc-700 gap-4 md:gap-0"
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
@@ -369,23 +369,23 @@ export default function EventDetailPage({ params }) {
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 w-full md:w-auto justify-end">
                                         <button
                                             onClick={() => rejectRegistration(reg._id)}
-                                            className="px-4 py-2 rounded-xl bg-zinc-700 text-zinc-300 hover:bg-zinc-600 transition-colors"
+                                            className="px-4 py-2 rounded-xl bg-zinc-700 text-zinc-300 hover:bg-zinc-600 transition-colors flex-1 md:flex-none justify-center md:items-center"
                                         >
                                             Reject
                                         </button>
                                         <button
                                             onClick={() => approveRegistration(reg._id, event.approvalType)}
                                             disabled={approvingId === reg._id}
-                                            className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 ${event.approvalType === "qr"
+                                            className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 flex-1 md:flex-none justify-center md:items-center ${event.approvalType === "qr"
                                                 ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white"
                                                 : "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white"
                                                 }`}
                                         >
                                             {approvingId === reg._id ? (
-                                                <span className="flex items-center gap-2">
+                                                <span className="flex items-center gap-2 justify-center">
                                                     <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -416,7 +416,7 @@ export default function EventDetailPage({ params }) {
                             {approvedRegistrations.map((reg) => (
                                 <div
                                     key={reg._id}
-                                    className="flex items-center justify-between p-4 rounded-xl bg-zinc-800/50 border border-zinc-700"
+                                    className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 rounded-xl bg-zinc-800/50 border border-zinc-700 gap-4 md:gap-0"
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
@@ -446,7 +446,7 @@ export default function EventDetailPage({ params }) {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 w-full md:w-auto justify-end">
                                         {/* Show proof commitment tooltip */}
                                         {reg.proofCommitment && (
                                             <div className="group relative">
@@ -466,7 +466,7 @@ export default function EventDetailPage({ params }) {
                                         )}
                                         <button
                                             onClick={() => { setSelectedRegistration(reg); setShowRevokeModal(true); }}
-                                            className="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors"
+                                            className="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors flex-1 md:flex-none"
                                         >
                                             Revoke
                                         </button>

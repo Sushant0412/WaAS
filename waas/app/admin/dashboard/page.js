@@ -126,7 +126,7 @@ export default function Dashboard() {
             <div className="fixed inset-0 z-0 bg-gradient-to-b from-zinc-950/90 via-zinc-950/70 to-zinc-950 pointer-events-none" />
 
             {/* Navigation */}
-            <nav className="relative z-10 flex items-center justify-between px-8 py-6 border-b border-zinc-800/50">
+            <nav className="relative z-10 flex flex-col md:flex-row items-center justify-between px-4 md:px-8 py-6 border-b border-zinc-800/50 gap-4 md:gap-0">
                 <Link href="/" className="flex items-center gap-3 group">
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,12 +156,12 @@ export default function Dashboard() {
             </nav>
 
             {/* Main Content */}
-            <main className="relative z-10 max-w-7xl mx-auto px-8 py-8">
+            <main className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 py-8">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4 md:gap-0">
                     <div>
                         <h1
-                            className="text-4xl font-bold text-white mb-2"
+                            className="text-3xl md:text-4xl font-bold text-white mb-2"
                             style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.02em" }}
                         >
                             Dashboard
@@ -170,7 +170,7 @@ export default function Dashboard() {
                     </div>
                     <Link
                         href="/admin/dashboard/events/new"
-                        className="group flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-orange-500/25"
+                        className="group flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-orange-500/25 w-full md:w-auto justify-center"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -245,7 +245,7 @@ export default function Dashboard() {
                                 <Link
                                     key={event._id || event.id}
                                     href={`/admin/dashboard/events/${event._id || event.id}`}
-                                    className="flex items-center justify-between p-6 hover:bg-zinc-800/30 transition-colors group"
+                                    className="flex flex-col md:flex-row items-start md:items-center justify-between p-6 hover:bg-zinc-800/30 transition-colors group gap-4 md:gap-0"
                                 >
                                     <div className="flex items-center gap-4">
                                         {/* Event Image or Placeholder */}
@@ -273,14 +273,16 @@ export default function Dashboard() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-3">
-                                        {/* Approval Type Badge */}
-                                        {getApprovalBadge(event.approvalType)}
+                                    <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                                        <div className="flex items-center gap-3">
+                                            {/* Approval Type Badge */}
+                                            {getApprovalBadge(event.approvalType)}
 
-                                        {/* Status Badge */}
-                                        <span className={`px-3 py-1 rounded-lg text-xs border ${getStatusColor(event.status || "active")}`}>
-                                            {event.status || "Active"}
-                                        </span>
+                                            {/* Status Badge */}
+                                            <span className={`px-3 py-1 rounded-lg text-xs border ${getStatusColor(event.status || "active")}`}>
+                                                {event.status || "Active"}
+                                            </span>
+                                        </div>
 
                                         {/* Arrow */}
                                         <svg className="w-5 h-5 text-zinc-600 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">

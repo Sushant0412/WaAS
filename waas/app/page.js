@@ -133,7 +133,7 @@ export default function Home() {
       )}
 
       {/* Navigation - Minimal */}
-      <nav className="relative z-10 flex items-center justify-between px-8 py-6">
+      <nav className="relative z-10 flex flex-col md:flex-row items-center justify-between px-4 md:px-8 py-6 gap-4 md:gap-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,12 +160,12 @@ export default function Home() {
       </nav>
 
       {/* Hero - Full Screen, Centered, Minimal */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-8 -mt-20">
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 md:px-8 -mt-10 md:-mt-20">
         {/* Main Content */}
-        <div className="text-center">
+        <div className="text-center w-full max-w-4xl mx-auto">
           {/* OSMOSIS - Big */}
           <h1
-            className="text-[12rem] md:text-[16rem] lg:text-[20rem] font-bold leading-none tracking-wider"
+            className="text-[5rem] sm:text-[8rem] md:text-[12rem] lg:text-[16rem] xl:text-[20rem] font-bold leading-none tracking-wider select-none"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             <span className="bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text text-transparent">
@@ -175,29 +175,29 @@ export default function Home() {
 
           {/* Subtitle */}
           <p
-            className="text-2xl md:text-3xl lg:text-4xl text-zinc-400 -mt-4 md:-mt-6 tracking-wide"
+            className="text-lg sm:text-2xl md:text-3xl lg:text-4xl text-zinc-400 -mt-2 sm:-mt-4 md:-mt-6 tracking-wide"
             style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.2em" }}
           >
             <span className="text-white">WHITELIST</span> as a <span className="text-white">SERVICE</span>
           </p>
 
           {/* Tagline */}
-          <p className="text-zinc-100 text-sm md:text-base mt-8 max-w-md mx-auto">
+          <p className="text-zinc-100 text-sm md:text-base mt-6 md:mt-8 max-w-md mx-auto px-4">
             Anonymous event whitelisting powered by ZK Proofs
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex items-center justify-center gap-4 mt-10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 md:mt-10 w-full sm:w-auto px-4 sm:px-0">
             <button
               onClick={handleCreateEvent}
-              className="group px-8 py-3 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-orange-500/25"
+              className="group w-full sm:w-auto px-8 py-3 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-orange-500/25"
             >
               <span className="group-hover:tracking-wider transition-all duration-300">Create Event</span>
             </button>
             <button
               onClick={handleViewEvents}
               disabled={isConnecting}
-              className="px-8 py-3 rounded-full border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/5 disabled:opacity-50"
+              className="w-full sm:w-auto px-8 py-3 rounded-full border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/5 disabled:opacity-50"
             >
               {isConnecting ? "Connecting..." : "Browse Events"}
             </button>

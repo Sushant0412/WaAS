@@ -133,7 +133,7 @@ export default function CreateEventPage() {
       {/* Main Layout */}
       <div className="relative z-10 flex min-h-screen">
         {/* Left Side - Form */}
-        <div className="w-full lg:w-1/2 p-8 overflow-y-auto">
+        <div className="w-full lg:w-1/2 p-4 md:p-8 overflow-y-auto">
           <div className="max-w-2xl">
             {/* Header */}
             <div className="mb-8">
@@ -156,7 +156,7 @@ export default function CreateEventPage() {
                 </svg>
                 Back
               </button>
-              <h1 className="text-4xl font-bold text-white mb-2 animate-slide-in-left">
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 animate-slide-in-left">
                 Create New Event
               </h1>
               <p className="text-zinc-400 animate-slide-in-left animation-delay-100">
@@ -209,7 +209,7 @@ export default function CreateEventPage() {
                 </div>
 
                 {/* Date and Time Row */}
-                <div className="grid grid-cols-2 gap-4 animate-fade-in-up animation-delay-400">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in-up animation-delay-400">
                   <div>
                     <label className="block text-sm font-medium text-zinc-300 mb-2">
                       Date *
@@ -347,7 +347,7 @@ export default function CreateEventPage() {
                   <label className="block text-sm font-medium text-zinc-300 mb-3">
                     Approval Type *
                   </label>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* QR Code Option */}
                     <button
                       type="button"
